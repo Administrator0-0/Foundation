@@ -38,6 +38,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation project(':foundation-annotation')
     implementation project(':foundation-lib')
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt project(':foundation-processor')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
