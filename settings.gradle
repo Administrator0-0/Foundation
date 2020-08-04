@@ -1,6 +1,5 @@
-include ':apt-processor'
-include ':apt-lib'
-include ':apt-annotation'
-include ':lib'
+include ':foundation-processor'
+include ':foundation-annotation'
+include ':foundation-lib'
 include ':app'
 rootProject.name = "Foundation"
