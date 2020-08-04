@@ -1,4 +1,5 @@
 package com.almoon.foundation_annotation
 
-class ObserveFun {
-}
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ObserveFun (val value: String)
