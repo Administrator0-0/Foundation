@@ -10,25 +10,26 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import kotlin.reflect.KClass
 
 class HttpComponent {
-    fun <T : Any> getGsonService(baseUrl: String, service: T): T {
+    fun <T : Any> getGsonService(baseUrl: String, service: KClass<T>): T {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(baseUrl)
             .build()
-            .create(service.javaClass)
+            .create(service.java)
     }
 
-    fun <T : Any> getScalarsService(baseUrl: String, service: T): T {
+    fun <T : Any> getScalarsService(baseUrl: String, service: KClass<T>): T {
         return Retrofit.Builder()
             .addConverterFactory(ScalarsConverterFactory.create())
             .baseUrl(baseUrl)
             .build()
-            .create(service.javaClass)
+            .create(service.java)
     }
 
-    fun <T> getJsonRequestBody(bean: T): RequestBody? {
+    fun <T> getJsonRequestBody(bean: T): RequestBody {
         val gson = Gson()
         val json = gson.toJson(bean)
         return RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), json)
@@ -41,10 +42,45 @@ class HttpComponent {
                 response: Response<T>
             ) {
                 val httpReturn: T? = response.body()
-                if (httpReturn != null) {
-                    httpCallback.onSuccess(HttpResult(httpReturn))
-                } else {
-                    httpCallback.onFail()
+                when {
+                    httpReturn != null -> {
+                        httpCallback.onSuccess(HttpResult(httpReturn))
+                    }
+                    response.errorBody() != null -> {
+                        httpCallback.onFail(response.errorBody()!!)
+                    }
+                    else -> {
+                        httpCallback.onFail()
+                    }
+                }
+            }
+
+            override fun onFailure(
+                call: Call<T>,
+                t: Throwable
+            ) {
+                httpCallback.onFail(t.message)
+            }
+        })
+    }
+
+    fun <T> nestedRequest(call: Call<T>, httpCallback: HttpCallback<T>) {
+        call.enqueue(object : Callback<T> {
+            override fun onResponse(
+                call: Call<T>,
+                response: Response<T>
+            ) {
+                val httpReturn: T? = response.body()
+                when {
+                    httpReturn != null -> {
+                        httpCallback.onSuccess(HttpResult(httpReturn))
+                    }
+                    response.errorBody() != null -> {
+                        httpCallback.onFail(response.errorBody()!!)
+                    }
+                    else -> {
+                        httpCallback.onFail()
+                    }
                 }
             }
 
