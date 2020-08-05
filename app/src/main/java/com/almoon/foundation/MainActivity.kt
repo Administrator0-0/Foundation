@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     fun test() {
         Log.d("aaa","aaa")
     }
-    @ObserveFun("viewModel.getTest()")
+    //@ObserveFun("viewModel.getTest()")
     fun test2() {
         Log.d("aaa","bbb")
     }

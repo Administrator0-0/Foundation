@@ -11,11 +11,12 @@ import javax.lang.model.util.Elements
 import kotlin.collections.ArrayList
 
 
-class ClassCreatorProxy(elements: Elements, val typeElement: TypeElement) {
+class ClassCreatorProxy(elements: Elements, val typeElement: TypeElement, val isActivity: Boolean) {
     private val mBindingClassName: String
     private val mPackageName: String
     private val mVariableElementHashMap = HashMap<String, ArrayList<ExecutableElement>>()
-    private val tab = "    "
+    private val TAB = "    "
+
 
     val proxyClassFullClassName: String
         get() = "$mPackageName.$mBindingClassName"
@@ -40,7 +41,7 @@ class ClassCreatorProxy(elements: Elements, val typeElement: TypeElement) {
         builder.append("package ").append(mPackageName).append(";\n\n")
         builder.append("import com.almoon.foundation_lib.*;\n\n")
         builder.append("public class ").append(mBindingClassName).append(" {\n")
-        builder.append(tab)
+        builder.append(TAB)
         generateMethods(builder)
         builder.append("}\n")
         return builder.toString()
@@ -56,66 +57,26 @@ class ClassCreatorProxy(elements: Elements, val typeElement: TypeElement) {
             }
             for (element in elements!!) {
                 val name = element.simpleName.toString()
-                if (isSubtypeOfType(typeElement.asType(), "android.app.Activity")) {
-                    builder.append(tab).append(tab)
+                if (isActivity) {
+                    builder.append(TAB).append(TAB)
                     builder.append("(($typeElement)host).").append(id).append(".observe(")
                         .append("($typeElement)host, data -> {")
                         .append("\n")
-                        .append(tab).append(tab).append(tab).append("(($typeElement)host).")
+                        .append(TAB).append(TAB).append(TAB).append("(($typeElement)host).")
                         .append(name).append("();\n")
-                        .append(tab).append(tab).append("});\n")
+                        .append(TAB).append(TAB).append("});\n")
                 } else {
-                    builder.append(tab).append(tab)
+                    builder.append(TAB).append(TAB)
                     builder.append("(($typeElement)host).").append(id).append(".observe(")
                         .append("($typeElement)host.getViewLifecycleOwner(), data -> {")
                         .append("\n")
-                        .append(tab).append(tab).append(tab).append("(($typeElement)host).")
+                        .append(TAB).append(TAB).append(TAB).append("(($typeElement)host).")
                         .append(name).append("();\n")
-                        .append(tab).append(tab).append("});\n")
+                        .append(TAB).append(TAB).append("});\n")
                 }
             }
         }
-        builder.append(tab).append("}\n")
+        builder.append(TAB).append("}\n")
     }
 
-    fun isSubtypeOfType(typeMirror: TypeMirror, otherType: String): Boolean {
-        if (isTypeEqual(typeMirror, otherType)) {
-            return true
-        }
-        if (typeMirror.kind != TypeKind.DECLARED) {
-            return false
-        }
-        val declaredType = typeMirror as DeclaredType
-        val typeArguments = declaredType.typeArguments
-        if (typeArguments.size > 0) {
-            val typeString = java.lang.StringBuilder(declaredType.asElement().toString())
-            typeString.append('<')
-            for (i in typeArguments.indices) {
-                if (i > 0) {
-                    typeString.append(',')
-                }
-                typeString.append('?')
-            }
-            typeString.append('>')
-            if (typeString.toString() == otherType) {
-                return true
-            }
-        }
-        val element: Element = declaredType.asElement() as? TypeElement ?: return false
-        val typeElement = element as TypeElement
-        val superType = typeElement.superclass
-        if (isSubtypeOfType(superType, otherType)) {
-            return true
-        }
-        for (interfaceType in typeElement.interfaces) {
-            if (isSubtypeOfType(interfaceType, otherType)) {
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun isTypeEqual(typeMirror: TypeMirror, otherType: String): Boolean {
-        return otherType == typeMirror.toString()
-    }
 }
