@@ -16,7 +16,7 @@ class BlankFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this).get(TestViewModel::class.java)
-        Foundation.get().bind(this)
+        Foundation.getVM().bind(this)
         viewModel.getTest().value = 1
     }
 

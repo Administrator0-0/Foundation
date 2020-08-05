@@ -17,10 +17,10 @@ import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 
-class ObserverFunProcessor : AbstractProcessor() {
+class ObserveFunProcessor : AbstractProcessor() {
     private var mMessager: Messager? = null
     private var mElements: Elements? = null
-    private val mPoxyMap: MutableMap<String, ClassCreatorProxy> = HashMap()
+    private val mPoxyMap: MutableMap<String, ObserveFunCreatorProxy> = HashMap()
     private val TYPE_ACTIVITY = "android.app.Activity"
     private val TYPE_FRAGMENT = "androidx.fragment.app.Fragment"
 
@@ -53,11 +53,11 @@ class ObserverFunProcessor : AbstractProcessor() {
             if (proxy == null) {
                 when {
                     isSubtypeOfType(classElement.asType(), TYPE_ACTIVITY) -> {
-                        proxy = ClassCreatorProxy(mElements!!, classElement, true)
+                        proxy = ObserveFunCreatorProxy(mElements!!, classElement, true)
                         mPoxyMap[fullClassName] = proxy
                     }
                     isSubtypeOfType(classElement.asType(), TYPE_FRAGMENT) -> {
-                        proxy = ClassCreatorProxy(mElements!!, classElement, false)
+                        proxy = ObserveFunCreatorProxy(mElements!!, classElement, false)
                         mPoxyMap[fullClassName] = proxy
                     }
                     else -> {

@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         viewModel = ViewModelProvider(this).get(TestViewModel::class.java)
-        Foundation.get().bind(this)
+        Foundation.getVM().bind(this)
         viewModel.getTest().value = 1
     }
 

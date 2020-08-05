@@ -11,7 +11,7 @@ import javax.lang.model.util.Elements
 import kotlin.collections.ArrayList
 
 
-class ClassCreatorProxy(elements: Elements, val typeElement: TypeElement, val isActivity: Boolean) {
+class ObserveFunCreatorProxy(elements: Elements, val typeElement: TypeElement, val isActivity: Boolean) {
     private val mBindingClassName: String
     private val mPackageName: String
     private val mVariableElementHashMap = HashMap<String, ArrayList<ExecutableElement>>()
