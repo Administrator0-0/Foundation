@@ -8,7 +8,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.almoon.foundation_annotation.ObserveFun
 import com.almoon.foundation_lib.Foundation
 import com.almoon.foundation_lib.common.HttpResult
+import com.almoon.foundation_lib.interfaces.HttpCallback
 import com.almoon.foundation_lib.interfaces.HttpMapFun
+import okhttp3.ResponseBody
 import retrofit2.Call
 
 class MainActivity : AppCompatActivity() {
@@ -37,7 +39,7 @@ class MainActivity : AppCompatActivity() {
                     loginSend2.setEmail("233@233.com")
                     loginSend2.setPassword("233233")
                     val requestBody2 = Foundation.getHttp().getJsonRequestBody(loginSend2)
-                    val service2 = Foundation.getHttp().getGsonService("http://47.93.139.51:8000/", RetrofitService::class)
+                    val service2 = Foundation.getHttp().getGsonService("http://47.93.139.52:8000/", RetrofitService::class)
                     return service2.login(requestBody2)
                 }
             })
@@ -51,7 +53,26 @@ class MainActivity : AppCompatActivity() {
                     val service2 = Foundation.getHttp().getGsonService("http://47.93.139.52:8000/", RetrofitService::class)
                     return service2.login(requestBody2)
                 }
-            }).execute()
+            })
+            .addCallback(object : HttpCallback<CommonReturn> {
+                override fun onSuccess(result: HttpResult<CommonReturn>?) {
+                    Log.d("aaa", "2"+ result!!.getData()!!.getMessage())
+                }
+
+                override fun onFail(result: ResponseBody) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onFail() {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onFail(errorMessage: String?) {
+                    TODO("Not yet implemented")
+                }
+
+            })
+            .execute()
 
     }
 
