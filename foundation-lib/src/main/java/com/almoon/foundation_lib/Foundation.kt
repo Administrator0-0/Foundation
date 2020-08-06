@@ -1,7 +1,7 @@
 package com.almoon.foundation_lib
 
-import com.almoon.foundation_lib.component.HttpComponent
-import com.almoon.foundation_lib.component.ViewModelComponent
+import com.almoon.foundation_lib.components.HttpComponent
+import com.almoon.foundation_lib.components.ViewModelComponent
 
 class Foundation private constructor() {
     companion object {

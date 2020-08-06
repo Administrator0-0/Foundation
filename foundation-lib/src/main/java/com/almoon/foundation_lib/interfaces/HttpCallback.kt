@@ -1,4 +1,4 @@
-package com.almoon.foundation_lib.`interface`
+package com.almoon.foundation_lib.interfaces
 
 import com.almoon.foundation_lib.common.HttpResult
 import okhttp3.ResponseBody

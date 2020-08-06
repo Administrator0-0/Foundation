@@ -1,7 +1,8 @@
-package com.almoon.foundation_lib.component
+package com.almoon.foundation_lib.components
 
-import com.almoon.foundation_lib.`interface`.HttpCallback
+import com.almoon.foundation_lib.interfaces.HttpCallback
 import com.almoon.foundation_lib.common.HttpResult
+import com.almoon.foundation_lib.common.HttpTask
 import com.google.gson.Gson
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -64,33 +65,8 @@ class HttpComponent {
         })
     }
 
-    fun <T> nestedRequest(call: Call<T>, httpCallback: HttpCallback<T>) {
-        call.enqueue(object : Callback<T> {
-            override fun onResponse(
-                call: Call<T>,
-                response: Response<T>
-            ) {
-                val httpReturn: T? = response.body()
-                when {
-                    httpReturn != null -> {
-                        httpCallback.onSuccess(HttpResult(httpReturn))
-                    }
-                    response.errorBody() != null -> {
-                        httpCallback.onFail(response.errorBody()!!)
-                    }
-                    else -> {
-                        httpCallback.onFail()
-                    }
-                }
-            }
-
-            override fun onFailure(
-                call: Call<T>,
-                t: Throwable
-            ) {
-                httpCallback.onFail(t.message)
-            }
-        })
+    fun <T> nestedRequest(call: Call<T>): HttpTask<T> {
+        return HttpTask(call)
     }
 
 }

@@ -1,4 +1,4 @@
-package com.almoon.foundation_lib.component
+package com.almoon.foundation_lib.components
 
 import android.app.Activity
 import androidx.fragment.app.Fragment

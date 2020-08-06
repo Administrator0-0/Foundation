@@ -1,14 +1,15 @@
 package com.almoon.foundation
 
-import androidx.appcompat.app.AppCompatActivity
+//import com.almoon.foundation_lib.`interface`.HttpMapFun
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.almoon.foundation_annotation.ObserveFun
 import com.almoon.foundation_lib.Foundation
-import com.almoon.foundation_lib.`interface`.HttpCallback
 import com.almoon.foundation_lib.common.HttpResult
-import okhttp3.ResponseBody
+import com.almoon.foundation_lib.interfaces.HttpMapFun
+import retrofit2.Call
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,28 +29,29 @@ class MainActivity : AppCompatActivity() {
         val requestBody = Foundation.getHttp().getJsonRequestBody(loginSend)
         val service = Foundation.getHttp().getGsonService("http://47.93.139.52:8000/", RetrofitService::class)
         val call = service.login(requestBody)
-        Foundation.getHttp().requestHttp(call, object : HttpCallback<CommonReturn> {
-            override fun onSuccess(result: HttpResult<CommonReturn>?) {
-                if (result != null) {
-                    Log.d("aaa", "login: " + result.getData()!!.getMessage())
+        Foundation.getHttp().nestedRequest(call)
+            .flatMap<CommonReturn>(object: HttpMapFun<CommonReturn, CommonReturn> {
+                override fun map(result: HttpResult<CommonReturn>?): Call<CommonReturn> {
+                    Log.d("aaa", "1"+ result!!.getData()!!.getMessage())
+                    val loginSend2 = LoginSend()
+                    loginSend2.setEmail("233@233.com")
+                    loginSend2.setPassword("233233")
+                    val requestBody2 = Foundation.getHttp().getJsonRequestBody(loginSend2)
+                    val service2 = Foundation.getHttp().getGsonService("http://47.93.139.51:8000/", RetrofitService::class)
+                    return service2.login(requestBody2)
                 }
-            }
-
-            override fun onFail() {
-                Log.d("aaa","fail")
-            }
-
-            override fun onFail(errorMessage: String?) {
-                if (errorMessage != null) {
-                    Log.d("aaa", errorMessage)
+            })
+            .flatMap<CommonReturn>(object: HttpMapFun<CommonReturn, CommonReturn> {
+                override fun map(result: HttpResult<CommonReturn>?): Call<CommonReturn> {
+                    Log.d("aaa", "1"+ result!!.getData()!!.getMessage())
+                    val loginSend2 = LoginSend()
+                    loginSend2.setEmail("233@233.com")
+                    loginSend2.setPassword("233233")
+                    val requestBody2 = Foundation.getHttp().getJsonRequestBody(loginSend2)
+                    val service2 = Foundation.getHttp().getGsonService("http://47.93.139.52:8000/", RetrofitService::class)
+                    return service2.login(requestBody2)
                 }
-            }
-
-            override fun onFail(result: ResponseBody) {
-
-            }
-        })
-
+            }).execute()
 
     }
 

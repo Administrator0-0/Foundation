@@ -1,4 +1,4 @@
-package com.almoon.foundation_lib.component
+package com.almoon.foundation_lib.components
 
 import com.almoon.foundation_lib.common.EventMsg
 import org.greenrobot.eventbus.EventBus
