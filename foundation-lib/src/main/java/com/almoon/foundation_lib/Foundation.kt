@@ -6,7 +6,6 @@ import com.almoon.foundation_lib.components.EventComponent
 import com.almoon.foundation_lib.components.HttpComponent
 import com.almoon.foundation_lib.components.PermissionComponent
 import com.almoon.foundation_lib.components.ViewModelComponent
-import kotlin.reflect.KClass
 
 class Foundation private constructor() {
     companion object {
