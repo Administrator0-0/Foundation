@@ -1,16 +1,20 @@
 package com.almoon.foundation
 
-//import com.almoon.foundation_lib.`interface`.HttpMapFun
+import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.almoon.foundation_annotation.ObserveFun
 import com.almoon.foundation_lib.Foundation
+import com.almoon.foundation_lib.common.EventMsg
 import com.almoon.foundation_lib.common.HttpResult
 import com.almoon.foundation_lib.interfaces.HttpCallback
 import com.almoon.foundation_lib.interfaces.HttpMapFun
 import okhttp3.ResponseBody
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import retrofit2.Call
 
 class MainActivity : AppCompatActivity() {
@@ -21,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         viewModel = ViewModelProvider(this).get(TestViewModel::class.java)
-        Foundation.getVM().bind(this)
+        Foundation.bind(this)
         viewModel.getTest().value = 1
 
 
@@ -73,17 +77,26 @@ class MainActivity : AppCompatActivity() {
 
             })
             .execute()
+        Foundation.getPermission().requestPermission(this, 1, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        Foundation.getEvent().postEvent("aaa","ddd")
 
     }
 
-
-    @ObserveFun("viewModel.getTest()")
-    fun test() {
-        Log.d("aaa","aaa")
-    }
-    //@ObserveFun("viewModel.getTest()")
-    fun test2() {
-        Log.d("aaa","bbb")
+//    @ObserveFun("viewModel.getTest()")
+//    fun test() {
+//        Log.d("aaa","aaa")
+//    }
+//    @ObserveFun("viewModel.getTest()")
+//    fun test2() {
+//        Log.d("aaa","bbb")
+//    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun test3(eventMsg: EventMsg<String, String>) {
+        if ("aaa" == eventMsg.getWhat()) {
+            Log.d("aaa", "bbb" + eventMsg.getMsg())
+        } else {
+            Log.d("aaa", "eee")
+        }
     }
 
 }

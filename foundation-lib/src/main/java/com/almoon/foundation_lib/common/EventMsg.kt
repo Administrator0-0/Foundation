@@ -1,35 +1,35 @@
 package com.almoon.foundation_lib.common
 
-class EventMsg {
-    private var what = ""
-    private var msg = ""
+class EventMsg <T, V> {
+    private var what : T
+    private var msg : V
     private var msgInt = 0
 
-    constructor(what: String, msg: String) {
+    constructor(what: T, msg: V) {
         this.what = what
         this.msg = msg
     }
-    constructor(what: String, msg: String, msgInt: Int) {
+    constructor(what: T, msg: V, msgInt: Int) {
         this.what = what
         this.msg = msg
         this.msgInt = msgInt
     }
 
     companion object {
-        fun getInstance(what: String, msg: String): EventMsg {
+        fun<T, V> getInstance(what: T, msg: V): EventMsg<T, V> {
             return EventMsg(what, msg)
         }
 
-        fun getInstance(what: String, msg: String, msgInt: Int): EventMsg {
+        fun<T, V> getInstance(what: T, msg: V, msgInt: Int): EventMsg<T, V> {
             return EventMsg(what, msg, msgInt)
         }
     }
 
-    fun setWhat(what: String) {
+    fun setWhat(what: T) {
         this.what = what
     }
 
-    fun setMsg(msg: String) {
+    fun setMsg(msg: V) {
         this.msg = msg
     }
 
@@ -37,11 +37,11 @@ class EventMsg {
         this.msgInt = msgInt
     }
 
-    fun getWhat(): String {
+    fun getWhat(): T {
         return what
     }
 
-    fun getMsg(): String {
+    fun getMsg(): V {
         return msg
     }
 

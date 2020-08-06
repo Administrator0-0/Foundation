@@ -4,19 +4,23 @@ import com.almoon.foundation_lib.common.EventMsg
 import org.greenrobot.eventbus.EventBus
 
 class EventComponent {
-    fun postEvent(what: String, msg: String) {
+    fun register(any: Any) {
+        EventBus.getDefault().register(any)
+    }
+
+    fun<T, V> postEvent(what: T, msg: V) {
         EventBus.getDefault().post(EventMsg.getInstance(what, msg))
     }
 
-    fun postEvent(what: String, msg: String, msgInt: Int) {
+    fun<T, V> postEvent(what: T, msg: V, msgInt: Int) {
         EventBus.getDefault().post(EventMsg.getInstance(what, msg, msgInt))
     }
 
-    fun postStickyEvent(what: String, msg: String) {
+    fun<T, V> postStickyEvent(what: T, msg: V) {
         EventBus.getDefault().postSticky(EventMsg.getInstance(what, msg))
     }
 
-    fun postStickyEvent(what: String, msg: String, msgInt: Int) {
+    fun<T, V> postStickyEvent(what: T, msg: V, msgInt: Int) {
         EventBus.getDefault().postSticky(EventMsg.getInstance(what, msg, msgInt))
     }
 }

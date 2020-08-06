@@ -1,7 +1,12 @@
 package com.almoon.foundation_lib
 
+import android.app.Activity
+import androidx.fragment.app.Fragment
+import com.almoon.foundation_lib.components.EventComponent
 import com.almoon.foundation_lib.components.HttpComponent
+import com.almoon.foundation_lib.components.PermissionComponent
 import com.almoon.foundation_lib.components.ViewModelComponent
+import kotlin.reflect.KClass
 
 class Foundation private constructor() {
     companion object {
@@ -16,6 +21,20 @@ class Foundation private constructor() {
             return instance!!
         }
 
+        fun bind(any: Any) {
+            getEvent().register(any)
+            val a = any.javaClass
+            try {
+                a.asSubclass(Activity::class.java)
+                getVM().bind(any as Activity)
+            } catch (e: ClassCastException) {
+                try {
+                    a.asSubclass(Fragment::class.java)
+                    getVM().bind(any as Fragment)
+                } catch (e: ClassCastException) {}
+            }
+        }
+
         fun getHttp(): HttpComponent {
             return get().httpComponent
         }
@@ -23,10 +42,19 @@ class Foundation private constructor() {
         fun getVM(): ViewModelComponent {
             return get().viewModelComponent
         }
-    }
 
-    private val httpComponent: HttpComponent = HttpComponent()
+        fun getEvent(): EventComponent {
+            return get().eventComponent
+        }
+
+        fun getPermission(): PermissionComponent {
+            return get().permissionComponent
+        }
+    }
+    private var httpComponent: HttpComponent = HttpComponent()
     private val viewModelComponent: ViewModelComponent = ViewModelComponent()
+    private val eventComponent: EventComponent = EventComponent()
+    private val permissionComponent: PermissionComponent = PermissionComponent()
 
 
 
