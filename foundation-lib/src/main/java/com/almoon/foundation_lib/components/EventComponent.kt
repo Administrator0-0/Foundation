@@ -3,6 +3,9 @@ package com.almoon.foundation_lib.components
 import com.almoon.foundation_lib.common.EventMsg
 import org.greenrobot.eventbus.EventBus
 
+/**
+ * EventComponent is designed to easily use EventBus
+ */
 class EventComponent {
     fun register(any: Any) {
         EventBus.getDefault().register(any)

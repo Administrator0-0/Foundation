@@ -79,7 +79,6 @@ class MainActivity : AppCompatActivity() {
             .execute()
         Foundation.getPermission().requestPermission(this, 1, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         Foundation.getEvent().postEvent("aaa","ddd")
-
     }
 
 //    @ObserveFun("viewModel.getTest()")
@@ -91,7 +90,7 @@ class MainActivity : AppCompatActivity() {
 //        Log.d("aaa","bbb")
 //    }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun test3(eventMsg: EventMsg<String, String>) {
+    fun test3(eventMsg: EventMsg<String, Int>) {
         if ("aaa" == eventMsg.getWhat()) {
             Log.d("aaa", "bbb" + eventMsg.getMsg())
         } else {

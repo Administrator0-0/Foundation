@@ -6,7 +6,13 @@ import com.almoon.foundation_lib.components.EventComponent
 import com.almoon.foundation_lib.components.HttpComponent
 import com.almoon.foundation_lib.components.PermissionComponent
 import com.almoon.foundation_lib.components.ViewModelComponent
+import com.almoon.foundation_lib.utils.DateUtil
+import com.almoon.foundation_lib.utils.EncryptUtil
+import com.almoon.foundation_lib.utils.SPUtil
 
+/**
+ * Foundation is designed to promote the speed of development with MVVM
+ */
 class Foundation private constructor() {
     companion object {
         private var instance: Foundation? = null
@@ -20,16 +26,19 @@ class Foundation private constructor() {
             return instance!!
         }
 
-        fun bind(any: Any) {
-            getEvent().register(any)
-            val a = any.javaClass
+        /**
+         * More easily init VMComponent & EventComponent for target
+         */
+        fun bind(target: Any) {
+            getEvent().register(target)
+            val a = target.javaClass
             try {
                 a.asSubclass(Activity::class.java)
-                getVM().bind(any as Activity)
+                getVM().bind(target as Activity)
             } catch (e: ClassCastException) {
                 try {
                     a.asSubclass(Fragment::class.java)
-                    getVM().bind(any as Fragment)
+                    getVM().bind(target as Fragment)
                 } catch (e: ClassCastException) {}
             }
         }
@@ -49,12 +58,38 @@ class Foundation private constructor() {
         fun getPermission(): PermissionComponent {
             return get().permissionComponent
         }
+
+        fun getSPUtil(): SPUtil {
+            return get().spUtil
+        }
+
+        fun getEncryptUtil(): EncryptUtil {
+            return get().encryptUtil
+        }
+
+
+        fun getDateUtil(): DateUtil {
+            return get().dateUtil
+        }
+
+        fun setSPUtil(spUtil: SPUtil) {
+            get().spUtil = spUtil
+        }
+
+        fun setEncryptUtil(encryptUtil: EncryptUtil) {
+            get().encryptUtil = encryptUtil
+        }
+
+        fun setDateUtil(dateUtil: DateUtil) {
+            get().dateUtil = dateUtil
+        }
     }
-    private var httpComponent: HttpComponent = HttpComponent()
-    private val viewModelComponent: ViewModelComponent = ViewModelComponent()
-    private val eventComponent: EventComponent = EventComponent()
-    private val permissionComponent: PermissionComponent = PermissionComponent()
-
-
+    private val httpComponent = HttpComponent()
+    private val viewModelComponent = ViewModelComponent()
+    private val eventComponent = EventComponent()
+    private val permissionComponent = PermissionComponent()
+    private var spUtil = SPUtil()
+    private var encryptUtil = EncryptUtil()
+    private var dateUtil = DateUtil()
 
 }

@@ -7,6 +7,9 @@ import androidx.fragment.app.Fragment
 import pub.devrel.easypermissions.EasyPermissions
 import pub.devrel.easypermissions.PermissionRequest
 
+/**
+ * PermissionComponent is designed to easily request permission
+ */
 class PermissionComponent {
     private val TAG: String = "RequestPermission"
     private lateinit var builder: PermissionRequest.Builder
@@ -19,6 +22,9 @@ class PermissionComponent {
         return EasyPermissions.hasPermissions(context, *strings)
     }
 
+    /**
+     * Directly request permission
+     */
     fun requestPermission(context: Activity, requestCode: Int, vararg strings:String) {
         if (!checkPermission(context, *strings)) {
             builder = PermissionRequest.Builder(context, requestCode, *strings)
@@ -26,6 +32,9 @@ class PermissionComponent {
         }
     }
 
+    /**
+     * Request permission with some buttons' text by string
+     */
     fun requestPermission (
         context: Fragment,
         negative: String,
@@ -47,6 +56,9 @@ class PermissionComponent {
         }
     }
 
+    /**
+     * Request permission with some buttons' text by resId
+     */
     fun requestPermission (
         context: Fragment,
         negative: Int,

@@ -13,7 +13,13 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import kotlin.reflect.KClass
 
+/**
+ * HttpComponent is designed to easily use retrofit
+ */
 class HttpComponent {
+    /**
+     * Get service for json
+     */
     fun <T : Any> getGsonService(baseUrl: String, service: KClass<T>): T {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
@@ -21,7 +27,9 @@ class HttpComponent {
             .build()
             .create(service.java)
     }
-
+    /**
+     * Get service for scalars
+     */
     fun <T : Any> getScalarsService(baseUrl: String, service: KClass<T>): T {
         return Retrofit.Builder()
             .addConverterFactory(ScalarsConverterFactory.create())
@@ -29,13 +37,19 @@ class HttpComponent {
             .build()
             .create(service.java)
     }
-
+    /**
+     * Get requestBody for json
+     */
     fun <T> getJsonRequestBody(bean: T): RequestBody {
         val gson = Gson()
         val json = gson.toJson(bean)
         return RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), json)
     }
-
+    /**
+     * Call http request
+     * @param call Retrofit's call
+     * @param httpCallback Foundation's HttpCallback
+     */
     fun <T> requestHttp(call: Call<T>, httpCallback: HttpCallback<T>) {
         call.enqueue(object : Callback<T> {
             override fun onResponse(
@@ -65,6 +79,10 @@ class HttpComponent {
         })
     }
 
+    /**
+     * More easily to use nested requests & code will be more clear
+     * You should use flatMap() to call other requests
+     */
     fun <T> nestedRequest(call: Call<T>): HttpTask<T> {
         return HttpTask(call)
     }

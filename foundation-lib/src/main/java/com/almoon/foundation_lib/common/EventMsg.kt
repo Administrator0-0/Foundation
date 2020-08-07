@@ -1,6 +1,9 @@
 package com.almoon.foundation_lib.common
 
-class EventMsg <T, V> {
+/**
+ * Carry message in event bus
+ */
+open class EventMsg <T, V> {
     private var what : T
     private var msg : V
     private var msgInt = 0

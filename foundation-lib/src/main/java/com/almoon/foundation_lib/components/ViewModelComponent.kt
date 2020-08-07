@@ -5,9 +5,15 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import java.lang.reflect.InvocationTargetException
 
+/**
+ * ViewModelComponent is designed to easily use MVVM
+ */
 class ViewModelComponent {
     private val TAG = "ViewModelComponent"
 
+    /**
+     * You must invoke this to make annotations be effective
+     */
     fun bind(activity: Activity) {
         val clazz: Class<*> = activity.javaClass
         try {
@@ -27,6 +33,9 @@ class ViewModelComponent {
         }
     }
 
+    /**
+     * You must invoke this to make annotations be effective
+     */
     fun bind(fragment: Fragment) {
         val clazz: Class<*> = fragment.javaClass
         try {
