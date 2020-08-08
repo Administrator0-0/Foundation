@@ -11,7 +11,7 @@
 ​		This program will be more clear for calling nested http requests by retrofit
 
 ```kotlin
-		val loginSend = LoginSend()
+val loginSend = LoginSend()
         loginSend.setEmail("233@233.com")
         loginSend.setPassword("233233")
         val requestBody = Foundation.getHttp().getJsonRequestBody(loginSend)
