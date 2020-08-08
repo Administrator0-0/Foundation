@@ -6,7 +6,7 @@ group ='com.github.administrator0-0.Foundation'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    api project(':foundation-annotation')
+    implementation project(':foundation-annotation')
 }
 
 sourceCompatibility = "1.7"
