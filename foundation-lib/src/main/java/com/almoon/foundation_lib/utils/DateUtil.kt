@@ -6,7 +6,7 @@ import java.util.*
 import kotlin.math.floor
 
 /**
- * Date Util
+ * Date Util, you can extend it to use your util
  */
 open class DateUtil {
     var locale: Locale = Locale.CHINA
@@ -54,7 +54,7 @@ open class DateUtil {
     }
 
     /**
-     *  Get time string by
+     *  Get time string by millisecond
      */
     fun getDateTimeByMillisecond(time: Long, type: String?): String {
         val date = Date(time)
@@ -67,10 +67,13 @@ open class DateUtil {
         type: String?,
         separator: String
     ): String? {
-        return getDateTimeByMillisecond(time, type) + separator + changeDataToWeek(time)
+        return getDateTimeByMillisecond(time, type) + separator + changeDateToWeek(time)
     }
 
-    fun changeDataToWeek(time: Long): String? {
+    /**
+     *  Change date to week
+     */
+    fun changeDateToWeek(time: Long): String? {
         val sdr = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", locale)
         val times = sdr.format(Date(time)) ?: return null
         val date: Date
@@ -144,12 +147,14 @@ open class DateUtil {
         return day.toInt()
     }
 
+    /**
+     *  Get DateTip from time
+     */
     fun getDateTipFromTimestamp(timestamp: Long): String? {
         // 获得当前时间并向下取整
         val today = floor((System.currentTimeMillis() / (1000 * 60 * 60 * 24)).toDouble()).toFloat()
         val target = timestamp.toFloat() / (1000 * 60 * 60 * 24)
 
-        //Log.e("test", today + "===" + target);
         val day = today - target
         val date: String
         date = if (day <= 0f) {
@@ -159,11 +164,14 @@ open class DateUtil {
         } else if (day > 1f && day <= 2f) {
             "前天"
         } else {
-            getDateTimeByMillisecond(timestamp, "MM-dd") + " " + changeDataToWeek(timestamp)
+            getDateTimeByMillisecond(timestamp, "MM-dd") + " " + changeDateToWeek(timestamp)
         }
         return date
     }
 
+    /**
+     *  Get DateTip from time string
+     */
     fun getDateTipFromTimestamp(timestamp: Long, type: String?): String? {
         val today = floor((System.currentTimeMillis() / (1000 * 60 * 60 * 24)).toDouble()).toFloat()
         val target = timestamp.toFloat() / (1000 * 60 * 60 * 24)

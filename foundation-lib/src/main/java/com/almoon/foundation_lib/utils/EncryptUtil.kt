@@ -3,6 +3,9 @@ package com.almoon.foundation_lib.utils
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
+/**
+ * EncryptUtil, you can extend it to use your util
+ */
 open class EncryptUtil {
     companion object {
         fun encrypt(origin: String?, type: String): String? {

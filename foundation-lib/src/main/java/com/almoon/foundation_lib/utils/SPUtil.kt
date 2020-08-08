@@ -5,7 +5,12 @@ import android.content.SharedPreferences
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
+/**
+ * SPUtil, you can extend it to use your util
+ * You are better to change the default filename
+ */
 open class SPUtil {
+    // Default filename
     var filename = "Default"
 
     fun put(context: Context, key: String?, `object`: Any) {
