@@ -81,14 +81,14 @@ class MainActivity : AppCompatActivity() {
         Foundation.getEvent().postEvent("aaa","ddd")
     }
 
-//    @ObserveFun("viewModel.getTest()")
-//    fun test() {
-//        Log.d("aaa","aaa")
-//    }
-//    @ObserveFun("viewModel.getTest()")
-//    fun test2() {
-//        Log.d("aaa","bbb")
-//    }
+    @ObserveFun("viewModel.getTest()")
+    fun test() {
+        Log.d("aaa","aaa")
+    }
+    @ObserveFun("viewModel.getTest()")
+    fun test2() {
+        Log.d("aaa","bbb")
+    }
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun test3(eventMsg: EventMsg<String, Int>) {
         if ("aaa" == eventMsg.getWhat()) {
