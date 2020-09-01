@@ -27,9 +27,32 @@ class Foundation private constructor() {
         }
 
         /**
-         * More easily init VMComponent & EventComponent for target
+         * More easily init VMComponent for target
          */
         fun bind(target: Any) {
+            val a = target.javaClass
+            try {
+                a.asSubclass(Activity::class.java)
+                getVM().bind(target as Activity)
+            } catch (e: ClassCastException) {
+                try {
+                    a.asSubclass(Fragment::class.java)
+                    getVM().bind(target as Fragment)
+                } catch (e: ClassCastException) {}
+            }
+        }
+
+        /**
+         * More easily init EventComponent for target
+         */
+        fun register(target: Any) {
+            getEvent().register(target)
+        }
+
+        /**
+         * More easily init VMComponent & EventComponent for target
+         */
+        fun fullBind(target: Any) {
             getEvent().register(target)
             val a = target.javaClass
             try {
