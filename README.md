@@ -1,6 +1,6 @@
 # Foundation
 
-​	For easily build a MVVM project & promote the speed of coding.
+​	For easily buildng a MVVM project & promoting the speed of coding.
 
 ​	**Attention**: Foundation requires at minimum Java 8+ & Android API 16+.
 
@@ -100,7 +100,7 @@ Foundation.getPermission().requestPermission(this, 1, Manifest.permission.WRITE_
 
 ### 3. EventComponent
 
-​			This program will help you easily request permissions by permissionX
+​			This program will help you easily use enventBus
 
 ​			You can invoke Foundation.bind() or Foundation.getEvent().register() to register your object
 
@@ -114,7 +114,7 @@ Foundation.getEvent().postEvent("test","hello")
 
 ### 4. ViewModelComponent
 
-​		You can use ObserveFun(String) to fast make liveData observe your methods
+​		You can use ObserveFun(String) to fast make liveData to observe your methods
 
 ​		ObserveFun needs a string param , getting your liveData 
 
