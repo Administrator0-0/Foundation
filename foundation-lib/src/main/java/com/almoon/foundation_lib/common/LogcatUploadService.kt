@@ -2,20 +2,25 @@ package com.almoon.foundation_lib.common
 
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.JobIntentService
-import com.google.gson.Gson
-import okhttp3.MediaType
-import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.util.*
+import com.almoon.foundation_lib.interfaces.LogcatUploadListener
+
 
 class LogcatUploadService : JobIntentService() {
 
+    private val TAG = "LogcatUploadService"
+    private var logcatUploadListener: LogcatUploadListener? = null
+
+    fun setListener(logcatUploadListener: LogcatUploadListener) {
+        this.logcatUploadListener = logcatUploadListener
+    }
+
     override fun onHandleWork(intent: Intent) {
-        TODO("Not yet implemented")
+        if (logcatUploadListener != null) {
+            logcatUploadListener!!.send2Server(intent.getStringExtra("stackTraceInfo"))
+        } else {
+            Log.e(TAG, "LogcatUploadListener should be set to send stackTraceInfo")
+        }
     }
 
 }

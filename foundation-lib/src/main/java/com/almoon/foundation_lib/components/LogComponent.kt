@@ -1,6 +1,8 @@
 package com.almoon.foundation_lib.components
 
+import android.content.Context
 import android.util.Log
+import com.almoon.foundation_lib.common.CrashHandler
 import com.google.gson.Gson
 import org.json.JSONArray
 import org.json.JSONException
@@ -34,6 +36,9 @@ class LogComponent {
     private var threadEnable = true
     private var locationEnable = true
     private var messageEnable = true
+    private var autoUploadCrash = false
+    private var defaultHandler: Thread.UncaughtExceptionHandler? = null
+    private var crashSavePath = ""
 
     /**
      * Init Log
@@ -79,6 +84,31 @@ class LogComponent {
         this.threadEnable = true
         this.locationEnable = true
         this.messageEnable = true
+    }
+
+    /**
+     * Control auto uploading crash
+     */
+    fun setCrashSavePath(crashSavePath: String) {
+        this.crashSavePath = crashSavePath
+    }
+
+    fun openAutoUpload(context: Context) {
+        if (autoUploadCrash) return
+        openAutoUpload(context, uploadEnable = false, saveEnable = false)
+    }
+
+    fun openAutoUpload(context: Context, uploadEnable: Boolean, saveEnable: Boolean) {
+        if (autoUploadCrash) return
+        autoUploadCrash = true
+        defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler(CrashHandler(context, crashSavePath, uploadEnable, saveEnable))
+    }
+
+    fun closeAutoUpload() {
+        if (!autoUploadCrash) return
+        autoUploadCrash = false
+        Thread.setDefaultUncaughtExceptionHandler(defaultHandler)
     }
 
     /**

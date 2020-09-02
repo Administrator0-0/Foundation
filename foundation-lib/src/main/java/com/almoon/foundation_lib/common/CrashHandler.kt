@@ -10,21 +10,18 @@ import com.almoon.foundation_lib.utils.DateUtil
 import retrofit2.Call
 import java.io.*
 
-class CrashHandler : Thread.UncaughtExceptionHandler {
-    var context: Context? = null
-    var call: Call<*>? = null
-    var path = ""
-
-    fun MyCrashHandler(context: Context?) {
-        this.context = context
-    }
+class CrashHandler(var context: Context?, private var path: String,
+                   var uploadEnable: Boolean, var saveEnable: Boolean) : Thread.UncaughtExceptionHandler {
 
     override fun uncaughtException(t: Thread, e: Throwable) {
         Log.e("CrashHandler", "Thread = ${t.name}Throwable = ${e.message}".trimIndent())
         val stackTraceInfo: String = getStackTraceInfo(e)
-        Log.e("stackTraceInfo", stackTraceInfo)
-        startUploadService(stackTraceInfo)
-        saveThrowableMessage(stackTraceInfo)
+        if (uploadEnable) {
+            startUploadService(stackTraceInfo)
+        }
+        if (saveEnable) {
+            saveThrowableMessage(stackTraceInfo)
+        }
         Process.killProcess(Process.myPid())
     }
 
@@ -32,16 +29,7 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
      * Upload StackTrace info to backend
      */
     private fun startUploadService(stackTraceInfo: String) {
-        var appVersion = ""
-        val manager = context!!.packageManager
-        try {
-            val info = manager.getPackageInfo(context!!.packageName, 0)
-            appVersion = "Android-" + info.versionName
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
-        }
         val intent = Intent(context, LogcatUploadService::class.java)
-        intent.putExtra("appVersion", appVersion)
         intent.putExtra("stackTraceInfo", stackTraceInfo)
         context!!.startService(intent)
     }
@@ -69,6 +57,10 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
      */
     private fun saveThrowableMessage(errorMessage: String) {
         if (TextUtils.isEmpty(errorMessage)) {
+            return
+        }
+        if (path.isEmpty()) {
+            Log.e("CrashHandler", "Store failed, store path is empty")
             return
         }
         val file = File(path)
