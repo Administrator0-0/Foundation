@@ -2,10 +2,7 @@ package com.almoon.foundation_lib
 
 import android.app.Activity
 import androidx.fragment.app.Fragment
-import com.almoon.foundation_lib.components.EventComponent
-import com.almoon.foundation_lib.components.HttpComponent
-import com.almoon.foundation_lib.components.PermissionComponent
-import com.almoon.foundation_lib.components.ViewModelComponent
+import com.almoon.foundation_lib.components.*
 import com.almoon.foundation_lib.utils.DateUtil
 import com.almoon.foundation_lib.utils.EncryptUtil
 import com.almoon.foundation_lib.utils.SPUtil
@@ -75,6 +72,10 @@ class Foundation private constructor() {
             return get().permissionComponent
         }
 
+        fun getLog(): LogComponent {
+            return get().logComponent
+        }
+
         fun getSPUtil(): SPUtil {
             return get().spUtil
         }
@@ -104,6 +105,7 @@ class Foundation private constructor() {
     private val viewModelComponent = ViewModelComponent()
     private val eventComponent = EventComponent()
     private val permissionComponent = PermissionComponent()
+    private val logComponent = LogComponent()
     private var spUtil = SPUtil()
     private var encryptUtil = EncryptUtil()
     private var dateUtil = DateUtil()

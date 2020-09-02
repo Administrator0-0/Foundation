@@ -27,6 +27,8 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(TestViewModel::class.java)
         Foundation.bind(this)
         viewModel.getTest().value = 1
+        Foundation.getLog().d("ssss")
+        Foundation.getLog().j("{\"s\":\"ss\"}")
 
 
         val loginSend = LoginSend()
