@@ -347,7 +347,7 @@ class LogComponent {
      * Handy function to get a loggable stack trace from a Throwable
      * @param tr An exception to log
      */
-    fun getStackTraceString(tr: Throwable?): Array<String> {
+    private fun getStackTraceString(tr: Throwable?): Array<String> {
         if (tr == null) {
             return arrayOf("")
         }
