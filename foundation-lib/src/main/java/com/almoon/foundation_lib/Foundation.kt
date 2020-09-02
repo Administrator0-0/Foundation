@@ -43,13 +43,6 @@ class Foundation private constructor() {
         }
 
         /**
-         * More easily init EventComponent for target
-         */
-        fun register(target: Any) {
-            getEvent().register(target)
-        }
-
-        /**
          * More easily init VMComponent & EventComponent for target
          */
         fun fullBind(target: Any) {
