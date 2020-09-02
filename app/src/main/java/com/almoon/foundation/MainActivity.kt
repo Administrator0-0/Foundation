@@ -16,6 +16,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import retrofit2.Call
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,8 +28,8 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(TestViewModel::class.java)
         Foundation.bind(this)
         viewModel.getTest().value = 1
-        Foundation.getLog().d("ssss")
-        Foundation.getLog().j("{\"s\":\"ss\"}")
+        Foundation.getLog().init(false, true, true)
+        Foundation.getLog().e("aaa", "aaa", Exception("aaa"))
 
 
         val loginSend = LoginSend()
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity() {
             .flatMap<CommonReturn>(object: HttpMapFun<CommonReturn, CommonReturn> {
                 override fun map(result: HttpResult<CommonReturn>?): Call<CommonReturn> {
                     Log.d("aaa", "1"+ result!!.getData()!!.getMessage())
+                    Foundation.getLog().j(result!!.getData())
                     val loginSend2 = LoginSend()
                     loginSend2.setEmail("233@233.com")
                     loginSend2.setPassword("233233")

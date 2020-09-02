@@ -1,15 +1,18 @@
 package com.almoon.foundation_lib.components
 
 import android.util.Log
+import com.google.gson.Gson
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.PrintWriter
+import java.io.StringWriter
+import java.net.UnknownHostException
 
 /**
  * LogComponent is designed to easily use Log
  */
 class LogComponent {
-
     private val TOP_LEFT_CORNER = '╔'
     private val BOTTOM_LEFT_CORNER = '╚'
     private val MIDDLE_CORNER = '╟'
@@ -28,19 +31,54 @@ class LogComponent {
     private val LINE_SEPARATOR = System.getProperty("line.separator")
     private val JSON_INDENT = 4
     private var TAG = "Foundation"
+    private var threadEnable = true
+    private var locationEnable = true
+    private var messageEnable = true
 
     /**
-     * Init Log's TAG
+     * Init Log
      */
     fun init(TAG: String) {
+        init(TAG, true, locationEnable = true, messageEnable = true)
+    }
+
+    fun init(threadEnable: Boolean) {
+        init(threadEnable, locationEnable = true, messageEnable = true)
+    }
+
+    fun init(threadEnable: Boolean, locationEnable: Boolean) {
+        init(threadEnable, locationEnable, messageEnable = true)
+    }
+
+    fun init(threadEnable: Boolean, locationEnable: Boolean, messageEnable: Boolean) {
+        this.threadEnable = threadEnable
+        this.locationEnable = locationEnable
+        this.messageEnable = messageEnable
+    }
+
+    fun init(TAG: String, threadEnable: Boolean) {
+        init(TAG, threadEnable, locationEnable = true, messageEnable = true)
+    }
+
+    fun init(TAG: String, threadEnable: Boolean, locationEnable: Boolean) {
+        init(TAG, threadEnable, locationEnable, messageEnable = true)
+    }
+
+    fun init(TAG: String, threadEnable: Boolean, locationEnable: Boolean, messageEnable: Boolean) {
         this.TAG = TAG
+        this.threadEnable = threadEnable
+        this.locationEnable = locationEnable
+        this.messageEnable = messageEnable
     }
 
     /**
-     * Reset Log's TAG
+     * Reset Log
      */
     fun reset() {
         this.TAG = "Foundation"
+        this.threadEnable = true
+        this.locationEnable = true
+        this.messageEnable = true
     }
 
     /**
@@ -57,119 +95,164 @@ class LogComponent {
             val entry = aSet as Map.Entry<*, *>
             s[i] = "${entry.key.toString()} = ${entry.value},"
         }
-        printLog(V, *s)
+        printLog(V, null, *s)
     }
 
     /**
      * Print Json
      */
+    fun<T> j(bean: T) {
+        val gson = Gson()
+        printLog(D, null, *parseJsonStr(gson.toJson(bean)))
+    }
+
     fun j(jsonStr: String) {
-            var message: String
-            message = try {
-                when {
-                    jsonStr.startsWith("{") -> {
-                        val jsonObject = JSONObject(jsonStr)
-                        jsonObject.toString(JSON_INDENT)
-                    }
-                    jsonStr.startsWith("[") -> {
-                        val jsonArray = JSONArray(jsonStr)
-                        jsonArray.toString(JSON_INDENT)
-                    }
-                    else -> {
-                        jsonStr
-                    }
+        printLog(D, null, *parseJsonStr(jsonStr))
+    }
+
+    /**
+     * Parse json string to log
+     */
+    private fun parseJsonStr(jsonStr: String): Array<String> {
+        var message: String
+        message = try {
+            when {
+                jsonStr.startsWith("{") -> {
+                    val jsonObject = JSONObject(jsonStr)
+                    jsonObject.toString(JSON_INDENT)
                 }
-            } catch (e: JSONException) {
-                jsonStr
+                jsonStr.startsWith("[") -> {
+                    val jsonArray = JSONArray(jsonStr)
+                    jsonArray.toString(JSON_INDENT)
+                }
+                else -> {
+                    jsonStr
+                }
             }
-            message = LINE_SEPARATOR!! + message
-            val lines = message.split(LINE_SEPARATOR).toTypedArray()
-            printLog(D, *lines)
+        } catch (e: JSONException) {
+            jsonStr
+        }
+        message = LINE_SEPARATOR!! + message
+        return message.split(LINE_SEPARATOR).toTypedArray()
     }
 
     /**
      * Common Log
      */
     fun i(msg: String) {
-        printLog(I, msg)
+        printLog(I, null, msg)
     }
 
     fun d(msg: String) {
-        printLog(D, msg)
+        printLog(D, null, msg)
     }
 
     fun w(msg: String) {
-        printLog(W, msg)
+        printLog(W, null, msg)
     }
 
     fun e(msg: String) {
-        printLog(E, msg)
+        printLog(E, null, msg)
     }
 
     fun v(msg: String) {
-        printLog(V, msg)
+        printLog(V, null, msg)
     }
 
+    /**
+     * Log with TAG
+     */
     fun i(tag: String, msg: String) {
-        Log.i(tag, msg)
+        printLog(I, tag, msg)
     }
 
     fun d(tag: String, msg: String) {
-        Log.d(tag, msg)
+        printLog(D, tag, msg)
     }
 
     fun w(tag: String, msg: String) {
-        Log.w(tag, msg)
+        printLog(W, tag, msg)
     }
 
     fun e(tag: String, msg: String) {
-        Log.e(tag, msg)
+        printLog(E, tag, msg)
     }
 
     fun v(tag: String, msg: String) {
-        Log.v(tag, msg)
+        printLog(V, tag, msg)
     }
 
+    /**
+     * Log with Throwable
+     */
     fun i(tag: String, msg: String, tr: Throwable) {
-        Log.i(tag, msg, tr)
+        printLog(I, tag, parseThrowable(msg, tr))
     }
 
     fun d(tag: String, msg: String, tr: Throwable) {
-        Log.d(tag, msg, tr)
+        printLog(D, tag, parseThrowable(msg, tr))
     }
 
     fun w(tag: String, msg: String, tr: Throwable) {
-        Log.w(tag, msg, tr)
+        printLog(W, tag, parseThrowable(msg, tr))
     }
 
     fun e(tag: String, msg: String, tr: Throwable) {
-        Log.e(tag, msg, tr)
+        printLog(E, tag, parseThrowable(msg, tr))
     }
 
     fun v(tag: String, msg: String, tr: Throwable) {
-        Log.v(tag, msg, tr)
+        printLog(V, tag, parseThrowable(msg, tr))
     }
 
-    private fun print(type: Char, str: String) {
-        when (type) {
-            I -> Log.i(TAG, str)
-            D -> Log.d(TAG, str)
-            E -> Log.e(TAG, str)
-            V -> Log.v(TAG, str)
-            A -> Log.wtf(TAG, str)
-            W -> Log.w(TAG, str)
+    private fun parseThrowable(msg: String, tr: Throwable): ArrayList<String> {
+        val list = ArrayList<String>()
+        list.add(msg)
+        val trs = getStackTraceString(tr)
+        for (str in trs) {
+            list.add(str)
         }
+        return list
     }
 
-    private fun printHead(type: Char) {
-        print(type, TOP_BORDER)
-        print(type, "$HORIZONTAL_DOUBLE_LINE   Thread: " + Thread.currentThread().name)
-        print(type, MIDDLE_BORDER)
+    private fun print(type: Char, tag: String?, str: String) {
+        if (tag == null) {
+            when (type) {
+                I -> Log.i(TAG, str)
+                D -> Log.d(TAG, str)
+                E -> Log.e(TAG, str)
+                V -> Log.v(TAG, str)
+                A -> Log.wtf(TAG, str)
+                W -> Log.w(TAG, str)
+            }
+        } else {
+            when (type) {
+                I -> Log.i(tag, str)
+                D -> Log.d(tag, str)
+                E -> Log.e(tag, str)
+                V -> Log.v(tag, str)
+                A -> Log.wtf(tag, str)
+                W -> Log.w(tag, str)
+            }
+        }
+
     }
 
-    private fun printLocation(type: Char, vararg msg: String?) {
-        val stack =
-            Thread.currentThread().stackTrace
+    /**
+     * Print Thread
+     */
+    private fun printHead(type: Char, tag: String?) {
+        print(type, tag, "$HORIZONTAL_DOUBLE_LINE   Thread: " + Thread.currentThread().name)
+    }
+
+    /**
+     * Print Location
+     */
+    private fun printLocation(type: Char, tag: String?) {
+        if (threadEnable) {
+            print(type, tag, MIDDLE_BORDER)
+        }
+        val stack = Thread.currentThread().stackTrace
         var i = 0
         for (e in stack) {
             val name = e.className
@@ -184,31 +267,101 @@ class LogComponent {
         val methodName = stack[i].methodName
         val lineNumber = stack[i].lineNumber
         var sb = StringBuilder()
-        print(type, "$HORIZONTAL_DOUBLE_LINE   Location:")
+        print(type, tag, "$HORIZONTAL_DOUBLE_LINE   Location:")
         sb.append(HORIZONTAL_DOUBLE_LINE)
             .append("   (").append(className.toString()).append(").").append(methodName)
-        print(type, sb.toString())
+        print(type, tag, sb.toString())
         sb = StringBuilder()
         sb.append(HORIZONTAL_DOUBLE_LINE)
             .append("   (").append(className).append(":").append(lineNumber).append(")")
-        print(type, sb.toString())
-        print(type, if (msg.isEmpty()) BOTTOM_BORDER else MIDDLE_BORDER)
+        print(type, tag, sb.toString())
     }
 
-    private fun printMsg(type: Char, vararg msg: String?) {
-        print(type, "$HORIZONTAL_DOUBLE_LINE   Message:")
+    /**
+     * Print Message
+     */
+    private fun printMsg(type: Char, tag: String?, vararg msg: String?) {
+        if (threadEnable || locationEnable) {
+            print(type, tag, MIDDLE_BORDER)
+        }
+        print(type, tag, "$HORIZONTAL_DOUBLE_LINE   Message:")
         for (str in msg) {
-            print(type, "$HORIZONTAL_DOUBLE_LINE   $str")
+            print(type, tag, "$HORIZONTAL_DOUBLE_LINE   $str")
         }
-        print(type, BOTTOM_BORDER)
     }
 
-    private fun printLog(type: Char, vararg msg: String?) {
-        printHead(type)
-        printLocation(type, *msg)
-        if (msg.isEmpty()) {
-            return
+    /**
+     * Print Message
+     */
+    private fun printMsg(type: Char, tag: String?, msg: List<String>) {
+        if (threadEnable || locationEnable) {
+            print(type, tag, MIDDLE_BORDER)
         }
-        printMsg(type, *msg)
+        print(type, tag, "$HORIZONTAL_DOUBLE_LINE   Message:")
+        for (str in msg) {
+            print(type, tag, "$HORIZONTAL_DOUBLE_LINE   $str")
+        }
+    }
+
+    /**
+     * Print Log
+     */
+    private fun printLog(type: Char, tag: String?, vararg msg: String?) {
+        print(type, tag, TOP_BORDER)
+        if (threadEnable) {
+            printHead(type, tag)
+        }
+        if (locationEnable) {
+            printLocation(type, tag)
+        }
+        if (messageEnable) {
+            if (msg.isEmpty()) {
+                return
+            }
+            printMsg(type, tag, *msg)
+        }
+        print(type, tag, BOTTOM_BORDER)
+    }
+
+    /**
+     * Print Log
+     */
+    private fun printLog(type: Char, tag: String?, msg: ArrayList<String>) {
+        print(type, tag, TOP_BORDER)
+        if (threadEnable) {
+            printHead(type, tag)
+        }
+        if (locationEnable) {
+            printLocation(type, tag)
+        }
+        if (messageEnable) {
+            if (msg.isEmpty()) {
+                return
+            }
+            printMsg(type, tag, msg)
+        }
+        print(type, tag, BOTTOM_BORDER)
+    }
+
+    /**
+     * Handy function to get a loggable stack trace from a Throwable
+     * @param tr An exception to log
+     */
+    fun getStackTraceString(tr: Throwable?): Array<String> {
+        if (tr == null) {
+            return arrayOf("")
+        }
+        var t = tr
+        while (t != null) {
+            if (t is UnknownHostException) {
+                return arrayOf("")
+            }
+            t = t.cause
+        }
+        val sw = StringWriter()
+        val pw = PrintWriter(sw)
+        tr.printStackTrace(pw)
+        pw.flush()
+        return sw.toString().split('\n').toTypedArray()
     }
 }
