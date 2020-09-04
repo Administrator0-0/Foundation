@@ -15,6 +15,7 @@ class BlankFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Foundation.getLog().openAutoUpload(activity!!, uploadEnable = true, saveEnable = true)
         viewModel = ViewModelProvider(this).get(TestViewModel::class.java)
         Foundation.getVM().bind(this)
         viewModel.getTest().value = 1

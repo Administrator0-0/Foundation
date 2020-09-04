@@ -1,20 +1,22 @@
 package com.almoon.foundation_lib.common
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Process
 import android.text.TextUtils
 import android.util.Log
 import com.almoon.foundation_lib.utils.DateUtil
-import retrofit2.Call
 import java.io.*
+import kotlin.system.exitProcess
 
-class CrashHandler(var context: Context?, private var path: String,
-                   var uploadEnable: Boolean, var saveEnable: Boolean) : Thread.UncaughtExceptionHandler {
+class CrashHandler(var context: Activity,
+                   var uploadEnable: Boolean,
+                   var saveEnable: Boolean,
+                   private var path: String,
+                   private var time: Int) : Thread.UncaughtExceptionHandler {
+    private val TAG = "CrashHandler"
 
     override fun uncaughtException(t: Thread, e: Throwable) {
-        Log.e("CrashHandler", "Thread = ${t.name}Throwable = ${e.message}".trimIndent())
         val stackTraceInfo: String = getStackTraceInfo(e)
         if (uploadEnable) {
             startUploadService(stackTraceInfo)
@@ -22,7 +24,10 @@ class CrashHandler(var context: Context?, private var path: String,
         if (saveEnable) {
             saveThrowableMessage(stackTraceInfo)
         }
+        context.finish()
+        Thread.sleep(time.toLong())
         Process.killProcess(Process.myPid())
+        exitProcess(0)
     }
 
     /**
@@ -31,7 +36,7 @@ class CrashHandler(var context: Context?, private var path: String,
     private fun startUploadService(stackTraceInfo: String) {
         val intent = Intent(context, LogcatUploadService::class.java)
         intent.putExtra("stackTraceInfo", stackTraceInfo)
-        context!!.startService(intent)
+        context.startService(intent)
     }
 
 
@@ -60,7 +65,7 @@ class CrashHandler(var context: Context?, private var path: String,
             return
         }
         if (path.isEmpty()) {
-            Log.e("CrashHandler", "Store failed, store path is empty")
+            Log.e(TAG, "Store failed, store path is empty")
             return
         }
         val file = File(path)
@@ -94,7 +99,7 @@ class CrashHandler(var context: Context?, private var path: String,
                     outputStream.write(bytes, 0, len)
                 }
                 outputStream.flush()
-                Log.e("CrashHandler", "Write to local file successful：" + file.absolutePath)
+                Log.e(TAG, "Write to local file successful：" + file.absolutePath)
             } catch (e: FileNotFoundException) {
                 e.printStackTrace()
             } catch (e: IOException) {

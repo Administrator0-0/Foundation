@@ -29,10 +29,9 @@ class MainActivity : AppCompatActivity() {
         Foundation.bind(this)
         viewModel.getTest().value = 1
         Foundation.getLog().init(false, true, true)
-        Foundation.getLog().openAutoUpload(this)
         //Foundation.getLog().e("aaa", "aaa", Exception("aaa"))
+        Foundation.getLog().openAutoUpload(this,true,true)
         val a = 1 / 0
-
         val loginSend = LoginSend()
         loginSend.setEmail("233@233.com")
         loginSend.setPassword("233233")

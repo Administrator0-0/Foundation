@@ -1,5 +1,6 @@
 package com.almoon.foundation_lib.components
 
+import android.app.Activity
 import android.content.Context
 import android.util.Log
 import com.almoon.foundation_lib.common.CrashHandler
@@ -39,6 +40,7 @@ class LogComponent {
     private var autoUploadCrash = false
     private var defaultHandler: Thread.UncaughtExceptionHandler? = null
     private var crashSavePath = ""
+    private var waitTime = 1000
 
     /**
      * Init Log
@@ -87,22 +89,39 @@ class LogComponent {
     }
 
     /**
-     * Control auto uploading crash
+     * Set time of thread sleeping
+     * @param waitTime Time of thread sleeping before process being killed
      */
-    fun setCrashSavePath(crashSavePath: String) {
+    fun setWaitTime(waitTime: Int) {
+        this.waitTime = waitTime
+    }
+
+    /**
+     * Set path of saving logcat to local file
+     */
+    fun setStorePath(crashSavePath: String) {
         this.crashSavePath = crashSavePath
     }
 
-    fun openAutoUpload(context: Context) {
+    /**
+     * Open auto upload
+     * Uploading & Saving to file default to false
+     */
+    fun openAutoUpload(context: Activity) {
         if (autoUploadCrash) return
         openAutoUpload(context, uploadEnable = false, saveEnable = false)
     }
 
-    fun openAutoUpload(context: Context, uploadEnable: Boolean, saveEnable: Boolean) {
+    /**
+     * Open auto upload
+     * @param uploadEnable Is uploading to backend enable
+     * @param saveEnable Is saving to local file enable
+     */
+    fun openAutoUpload(context: Activity, uploadEnable: Boolean, saveEnable: Boolean) {
         if (autoUploadCrash) return
         autoUploadCrash = true
         defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandler(context, crashSavePath, uploadEnable, saveEnable))
+        Thread.setDefaultUncaughtExceptionHandler(CrashHandler(context, uploadEnable, saveEnable, crashSavePath, waitTime))
     }
 
     fun closeAutoUpload() {
