@@ -1,14 +1,22 @@
 # Foundation
 
-​	For easily buildng a MVVM project & promoting the speed of coding.
+​	Foundation旨在提高构建MVVM项目和项目编写的速度。
 
-​	**Attention**: Foundation requires at minimum Java 8+ & Android API 16+.
+​	**提示**: Foundation 需要至少 Java 8+ 和 Android API 16+。
 
-## Fast Step
+## Usage
 
 ### 1. HttpComponent
 
-​		This program will be more clear for calling nested http requests by retrofit
+​		HttpComponent可以简化使用Retrofit。
+
+​		getJsonRequestBody()可以获取RESTFUL规范的请求体，getGsonService()接收您自定义的Retrofit接口并返回RESTFUL规范的Retrofit Service。
+
+​		nestedRequest()和flatMap()可以帮助您更加清晰地调用嵌套的网络请求，类似于RxJava，您需要提供从上一个请求的结果转换到这个请求的Call的接口。
+
+​		对于每个请求您可以调用addCallback()添加请求回调。
+
+​		当所有链式调用完毕后，您可以调用execute()开始网络请求。
 
 ```kotlin
         val loginSend = LoginSend()
@@ -20,7 +28,6 @@
         Foundation.getHttp().nestedRequest(call)
             .flatMap<CommonReturn>(object: HttpMapFun<CommonReturn, CommonReturn> {
                 override fun map(result: HttpResult<CommonReturn>?): Call<CommonReturn> {
-                    Log.d("aaa", "1"+ result!!.getData()!!.getMessage())
                     val loginSend2 = LoginSend()
                     loginSend2.setEmail("233@233.com")
                     loginSend2.setPassword("233233")
@@ -31,7 +38,6 @@
             })
             .flatMap<CommonReturn>(object: HttpMapFun<CommonReturn, CommonReturn> {
                 override fun map(result: HttpResult<CommonReturn>?): Call<CommonReturn> {
-                    Log.d("aaa", "1"+ result!!.getData()!!.getMessage())
                     val loginSend2 = LoginSend()
                     loginSend2.setEmail("233@233.com")
                     loginSend2.setPassword("233233")
@@ -42,26 +48,19 @@
             })
             .addCallback(object : HttpCallback<CommonReturn> {
                 override fun onSuccess(result: HttpResult<CommonReturn>?) {
-                    Log.d("aaa", "2"+ result!!.getData()!!.getMessage())
                 }
-
                 override fun onFail(result: ResponseBody) {
-                    TODO("Not yet implemented")
                 }
-
                 override fun onFail() {
-                    TODO("Not yet implemented")
                 }
-
                 override fun onFail(errorMessage: String?) {
-                    TODO("Not yet implemented")
                 }
 
             })
             .execute()
 ```
 
-​		This program will help you easily call an http request with a callback
+​		您也可以直接使用requestHttp()发起一个网络请求。
 
 ```kotlin
 	val loginSend = LoginSend()
@@ -72,19 +71,19 @@
         val call = service.login(requestBody)
         Foundation.getHttp().requestHttp(call, object : HttpCallback<CommonReturn> {
             override fun onSuccess(result: HttpResult<CommonReturn>?) {
-                TODO("Not yet implemented")
+      
             }
 
             override fun onFail(result: ResponseBody) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onFail() {
-                TODO("Not yet implemented")
+       
             }
 
             override fun onFail(errorMessage: String?) {
-                TODO("Not yet implemented")
+        
             }
 
         })
@@ -92,7 +91,7 @@
 
 ### 2. PermissionComponent
 
-​			This program will help you easily request permissions by permissionX
+​			Foundation集成了PermissionX，您可以很简单地请求权限。
 
 ```kotlin
 Foundation.getPermission().requestPermission(this, 1, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -100,12 +99,14 @@ Foundation.getPermission().requestPermission(this, 1, Manifest.permission.WRITE_
 
 ### 3. EventComponent
 
-​			This program will help you easily use enventBus
+​			Foundation集成了EventBus。
 
-​			You can invoke Foundation.bind() or Foundation.getEvent().register() to register your object
+​			您可以调用 Foundation.fullBind() 或者 Foundation.getEvent().register() 去注册EventBus。
+
+​			Foundation提供了携带消息的载体EventMsg，您可以继承它，实现自己的消息载体。
 
 ```kotlin
-Foundation.bind(this)
+Foundation.fullBind(this)
 // or
 Foundation.getEvent().register(this)
 
@@ -114,50 +115,69 @@ Foundation.getEvent().postEvent("test","hello")
 
 ### 4. ViewModelComponent
 
-​		You can use ObserveFun(String) to fast make liveData to observe your methods
+​		Foundation提供了简化使用MVVM架构的方法。
 
-​		ObserveFun needs a string param , getting your liveData 
+​		ObserveFun 是一个应用于方法的注解，您需要提供liveData的获取方式，Foundation便可以为您快捷的将liveData与该方法做订阅。
+
+​		您需要在Activity或者Fragment中调用Foundation.bind()或者Foundation.fullBind()方法使得订阅生效，其中fullBind会注册EventBus。
 
 ```kotlin
     @ObserveFun("viewModel.getTest()")
     fun test() {
-        Log.d(TAG,"Yes")
     }
     @ObserveFun("viewModel.getTest()")
     fun test2() {
-        Log.d(TAG,"No")
     }
 ```
 
-### 5.Utils
+### 5. LogComponent
 
-​		There are 3 utils and you can extend them & replace them to use your utils
+​		您可以使用LogComponent去打印出类似logger的日志，默认TAG为Foundation，支持自定义TAG，打印异常。您可以使用Foundation.getLog().init()方法自定义是否打印线程信息、位置、消息。
+
+​		LogComponent支持格式化打印Json字符串与Map的键值对。
+
+```kotlin
+Foundation.getLog().init(threadEnable = false, locationEnable = true, messageEnable = true)
+Foundation.getLog().d("xxx")
+Foundation.getLog().j(json)
+Foundation.getLog().m(map)
+```
+
+​		LogComponent提供自动捕获crash信息，并上传至服务器或者存储至本地的方法。您需要调用Foundation.getLog().openAutoUpload()方法去开启是否自动上传或者保存至本地。您可以调用Foundation.getLog().setStorePath()去设置保存的路径，您也可以使用Foundation.getLog().closeAutoUpload()去关闭LogComponent抓捕crash信息。
+
+### 6.Utils
+
+​		Foundation提供封装好的util供您使用。
 
   1. DateUtil
 
-     ​	It provides some methods to easily proceed some date
+     ​	提供常见的日期处理方法。
 
   2. EncryptUtil
 
-     ​	It provides some methods to easily encrypt your string
+     ​	提供加密字符串的方法。
 
   3. SPUtil
 
-     ​	It provides some methods to easily use SharePerference
+     ​	提供便捷使用SharePerference的方法。
+
+### 7.Extra
+
+​	Foundation集成了AutoSize，其可以便捷地支持屏幕适配，必须在项目中的Manifest文件中添加meta-data，提供宽高参考。
 
 ## Releases
 
-​	You should add repository of jitpack
+​	您需要添加jitpack仓库。
 
 ```groovy
 maven { url 'https://jitpack.io' }
 ```
 
-​	Add dependencies to use Foundation
+​	添加如下依赖使用Foundation。
 
 ```groovy
-implementation 'com.github.Administrator0-0.Foundation:foundation-lib:0.01'
-annotationProcessor 'com.github.Administrator0-0.Foundation:foundation-processor:0.01'
+implementation 'com.github.Administrator0-0.Foundation:foundation-lib:1.0.0'
+annotationProcessor 'com.github.Administrator0-0.Foundation:foundation-processor:1.0.0'
 ```
 
 ## License
