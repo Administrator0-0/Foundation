@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import com.almoon.foundation_lib.common.CrashHandler
+import com.almoon.foundation_lib.interfaces.LogcatUploadListener
 import com.google.gson.Gson
 import org.json.JSONArray
 import org.json.JSONException
@@ -41,6 +42,7 @@ class LogComponent {
     private var defaultHandler: Thread.UncaughtExceptionHandler? = null
     private var crashSavePath = ""
     private var waitTime = 1000
+    private var logcatUploadListener: LogcatUploadListener? = null
 
     /**
      * Init Log
@@ -104,6 +106,15 @@ class LogComponent {
     }
 
     /**
+     * Set listener of uploading logcat to backend
+     * @param logcatUploadListener You must set it to upload logcat by yourself
+     */
+    fun setLogcatUploadListener(logcatUploadListener: LogcatUploadListener) {
+        this.logcatUploadListener = logcatUploadListener
+    }
+
+
+    /**
      * Open auto upload
      * Uploading & Saving to file default to false
      */
@@ -121,7 +132,8 @@ class LogComponent {
         if (autoUploadCrash) return
         autoUploadCrash = true
         defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandler(context, uploadEnable, saveEnable, crashSavePath, waitTime))
+        Thread.setDefaultUncaughtExceptionHandler(CrashHandler(context, uploadEnable, saveEnable,
+            crashSavePath, waitTime, logcatUploadListener))
     }
 
     fun closeAutoUpload() {

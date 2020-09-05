@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Process
 import android.text.TextUtils
 import android.util.Log
+import com.almoon.foundation_lib.interfaces.LogcatUploadListener
 import com.almoon.foundation_lib.utils.DateUtil
 import java.io.*
 import kotlin.system.exitProcess
@@ -13,7 +14,8 @@ class CrashHandler(var context: Activity,
                    var uploadEnable: Boolean,
                    var saveEnable: Boolean,
                    private var path: String,
-                   private var time: Int) : Thread.UncaughtExceptionHandler {
+                   private var time: Int,
+                   private var logcatUploadListener: LogcatUploadListener?) : Thread.UncaughtExceptionHandler {
     private val TAG = "CrashHandler"
 
     override fun uncaughtException(t: Thread, e: Throwable) {
@@ -36,6 +38,7 @@ class CrashHandler(var context: Activity,
     private fun startUploadService(stackTraceInfo: String) {
         val intent = Intent(context, LogcatUploadService::class.java)
         intent.putExtra("stackTraceInfo", stackTraceInfo)
+        intent.putExtra("listener", logcatUploadListener)
         context.startService(intent)
     }
 

@@ -11,6 +11,7 @@ import com.almoon.foundation_lib.common.EventMsg
 import com.almoon.foundation_lib.common.HttpResult
 import com.almoon.foundation_lib.interfaces.HttpCallback
 import com.almoon.foundation_lib.interfaces.HttpMapFun
+import com.almoon.foundation_lib.interfaces.LogcatUploadListener
 import okhttp3.ResponseBody
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -30,8 +31,6 @@ class MainActivity : AppCompatActivity() {
         viewModel.getTest().value = 1
         Foundation.getLog().init(threadEnable = false, locationEnable = true, messageEnable = true)
         Foundation.getLog().e("aaa", "aaa", Exception("aaa"))
-        Foundation.getLog().openAutoUpload(this,true,true)
-        Foundation.getLog().d("xxx")
         val loginSend = LoginSend()
         loginSend.setEmail("233@233.com")
         loginSend.setPassword("233233")

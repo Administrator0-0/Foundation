@@ -6,16 +6,13 @@ import androidx.core.app.JobIntentService
 import com.almoon.foundation_lib.interfaces.LogcatUploadListener
 
 
-class LogcatUploadService : JobIntentService() {
+class LogcatUploadService() : JobIntentService() {
 
     private val TAG = "LogcatUploadService"
     private var logcatUploadListener: LogcatUploadListener? = null
 
-    fun setListener(logcatUploadListener: LogcatUploadListener) {
-        this.logcatUploadListener = logcatUploadListener
-    }
-
     override fun onHandleWork(intent: Intent) {
+        logcatUploadListener = intent.getSerializableExtra("listener") as LogcatUploadListener?
         if (logcatUploadListener != null) {
             logcatUploadListener!!.send2Server(intent.getStringExtra("stackTraceInfo"))
         } else {

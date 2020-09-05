@@ -1,6 +1,8 @@
 package com.almoon.foundation_lib.interfaces
 
-interface LogcatUploadListener {
+import java.io.Serializable
+
+interface LogcatUploadListener : Serializable {
 
     fun send2Server(errorMessage: String?)
 }
