@@ -11,6 +11,10 @@ class EventComponent {
         EventBus.getDefault().register(any)
     }
 
+    fun unregister(any: Any) {
+        EventBus.getDefault().unregister(any)
+    }
+
     fun<T, V> postEvent(what: T, msg: V) {
         EventBus.getDefault().post(EventMsg.getInstance(what, msg))
     }

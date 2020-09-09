@@ -3,6 +3,7 @@ package com.almoon.foundation_lib.components
 import android.app.Activity
 import android.util.Log
 import androidx.fragment.app.Fragment
+import java.lang.Exception
 import java.lang.reflect.InvocationTargetException
 
 /**
@@ -21,7 +22,8 @@ class ViewModelComponent {
             val method = bindClass.getMethod("bind", activity.javaClass)
             method.invoke(bindClass.newInstance(), activity)
         } catch (e: ClassNotFoundException) {
-            Log.e(TAG, "error: don't have any observe function in " + clazz.name)
+            throw Exception("error: don't use any Observefun in " + clazz.name +
+                    ", only can be used in Activity or Fragment")
         } catch (e: NoSuchMethodException) {
             Log.e(TAG, "error: generate error " + clazz.name + "_FoundationBinding")
         } catch (e: IllegalAccessException) {
@@ -43,7 +45,8 @@ class ViewModelComponent {
             val method = bindClass.getMethod("bind", fragment.javaClass)
             method.invoke(bindClass.newInstance(), fragment)
         } catch (e: ClassNotFoundException) {
-            Log.e(TAG, "error: don't have any observe function in " + clazz.name)
+            throw Exception("error: don't use any Observefun in " + clazz.name +
+                    ", only can be used in Activity or Fragment")
         } catch (e: NoSuchMethodException) {
             Log.e(TAG, "error: generate error " + clazz.name + "_FoundationBinding")
         } catch (e: IllegalAccessException) {

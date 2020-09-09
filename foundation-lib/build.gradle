@@ -39,7 +39,6 @@ dependencies {
     api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     api 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
     api 'pub.devrel:easypermissions:1.2.0'
-    api 'me.jessyan:autosize:1.1.2'
     api project(':foundation-annotation')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
